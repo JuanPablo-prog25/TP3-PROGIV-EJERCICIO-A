@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { conectarDB } from "./db.js";
+import alumnosRouter from "./alumnos.js";
 
 await conectarDB();
 
