@@ -40,3 +40,23 @@ router.get("/", verificarAutenticacion, async (req, res) => {
 
   res.json({ success: true, notas: rows });
 });
+
+// obtener notas de un alumnos
+router.get(
+  "/alumno/:id",
+  verificarAutenticacion,
+  validarId,
+  verificarValidaciones,
+  async (req, res) => {
+    const id = Number(req.params.id);
+    const [rows] = await db.execute(
+      `SELECT n.*, m.nombre AS materia
+       FROM notas n
+       JOIN materias m ON n.materia_id = m.id
+       WHERE n.alumno_id=?`,
+      [id]
+    );
+
+    res.json({ success: true, notas: rows });
+  }
+);
