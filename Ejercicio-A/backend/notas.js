@@ -80,3 +80,21 @@ router.get(
     res.json({ success: true, notas: rows });
   }
 );
+
+// obtener promedio por alumnos y materia
+router.get("/promedios", verificarAutenticacion, async (req, res) => {
+  const [rows] = await db.execute(`
+    SELECT 
+      a.nombre AS alumno,
+      m.nombre AS materia,
+      ROUND((n.nota1 + n.nota2 + n.nota3)/3, 2) AS promedio
+    FROM notas n
+    JOIN alumnos a ON n.alumno_id = a.id
+    JOIN materias m ON n.materia_id = m.id
+    ORDER BY alumno, materia
+  `);
+
+  res.json({ success: true, promedios: rows });
+});
+
+export default router;
