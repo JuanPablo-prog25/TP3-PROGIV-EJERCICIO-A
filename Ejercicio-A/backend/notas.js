@@ -60,3 +60,23 @@ router.get(
     res.json({ success: true, notas: rows });
   }
 );
+
+// obtener notas por materia
+router.get(
+  "/materia/:id",
+  verificarAutenticacion,
+  validarId,
+  verificarValidaciones,
+  async (req, res) => {
+    const id = Number(req.params.id);
+    const [rows] = await db.execute(
+      `SELECT n.*, a.nombre AS alumno
+       FROM notas n
+       JOIN alumnos a ON n.alumno_id = a.id
+       WHERE n.materia_id=?`,
+      [id]
+    );
+
+    res.json({ success: true, notas: rows });
+  }
+);
