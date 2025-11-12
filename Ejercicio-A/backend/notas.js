@@ -28,3 +28,15 @@ router.post(
   }
 );
 
+// obtener todas las notas
+router.get("/", verificarAutenticacion, async (req, res) => {
+  const [rows] = await db.execute(`
+    SELECT n.*, a.nombre AS alumno, m.nombre AS materia
+    FROM notas n
+    JOIN alumnos a ON n.alumno_id = a.id
+    JOIN materias m ON n.materia_id = m.id
+    ORDER BY alumno, materia
+  `);
+
+  res.json({ success: true, notas: rows });
+});
