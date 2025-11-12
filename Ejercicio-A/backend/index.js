@@ -3,6 +3,8 @@ import cors from "cors";
 import { conectarDB } from "./db.js";
 import alumnosRouter from "./alumnos.js";
 import materiasRouter from "./materias.js"
+import notasRouter from "./notas.js";
+import authRouter, { authConfig } from "./auth.js";
 
 await conectarDB();
 
