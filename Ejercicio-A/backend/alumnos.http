@@ -1,0 +1,48 @@
+@url=http://localhost:3000
+
+### Login
+# @name login
+POST {{url}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "juanpabloocampo61@gmail.com",
+  "contraseña": "Prog4tp3"
+}
+
+### Token para usar en otras pruebas
+@token={{login.response.body.token}}
+
+### Listar todos los alumnos
+GET {{url}}/alumnos
+Authorization: Bearer {{token}}
+
+### Buscar alumno por ID
+GET {{url}}/alumnos/1
+Authorization: Bearer {{token}}
+
+### Crear alumno
+POST {{url}}/alumnos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Esteban",
+  "apellido": "Ormeño",
+  "dni": 45678901
+}
+
+### Modificar alumno
+PUT {{url}}/alumnos/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Sandro",
+  "apellido": "Mansilla",
+  "dni": 98765432
+}
+
+### Eliminar alumno
+DELETE {{url}}/alumnos/1
+Authorization: Bearer {{token}}
