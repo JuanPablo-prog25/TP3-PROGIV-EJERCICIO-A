@@ -94,17 +94,27 @@ router.put(
 );
 
 //elimina el alumno
-router.delete(
-  "/:id",
-  verificarAutenticacion,
-  validarId,
-  verificarValidaciones,
-  async (req, res) => {
-    const id = Number(req.params.id);
+router.delete("/:id", verificarAutenticacion, validarId, verificarValidaciones, async (req, res) => {
+  const id = Number(req.params.id);
 
-    await db.execute("DELETE FROM alumnos WHERE id=?", [id]);
-    res.json({ success: true, message: "Alumno eliminado", id });
+  try {
+    const [notas] = await db.execute("SELECT * FROM notas WHERE alumno_id = ?", [id]);
+    if (notas.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "El alumno tiene notas registradas. No se puede eliminar.",
+      });
+    }
+
+    await db.execute("DELETE FROM alumnos WHERE id = ?", [id]);
+    res.json({ success: true, message: "Alumno eliminado correctamente", id });
+  } catch (error) {
+    console.error("Error al eliminar alumno:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error en el back al eliminar el alumno",
+    });
   }
-);
+});
 
 export default router;
