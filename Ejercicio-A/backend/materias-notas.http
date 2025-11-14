@@ -1,0 +1,81 @@
+@url=http://localhost:3000
+
+### Login
+# @name login
+POST {{url}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "juanpabloocampo61@gmail.com",
+    "contraseña": "Prog4tp3"
+}
+
+###
+@token = {{login.response.body.token}}
+
+###  materias
+
+### Listar todas las materias
+GET {{url}}/materias
+Authorization: Bearer {{token}}
+
+### Buscar materia por ID
+GET {{url}}/materias/1
+Authorization: Bearer {{token}}
+
+### Crear materia
+POST {{url}}/materias
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Programacion II",
+  "codigo": "Prog202",
+  "año": 2024
+}
+
+### Modificar materia
+PUT {{url}}/materias/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Programacion IV",
+  "codigo": "Prog204",
+  "año": 2025
+}
+
+### Eliminar materia
+DELETE {{url}}/materias/1
+Authorization: Bearer {{token}}
+
+
+###  Notas
+### Asignar notas a un alumno
+POST {{url}}/notas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "alumno_id": 1,
+  "materia_id": 1,
+  "nota1": 8,
+  "nota2": 7,
+  "nota3": 9
+}
+
+### Ver notas de un alumno
+GET {{url}}/notas/alumno/1
+Authorization: Bearer {{token}}
+
+### Ver notas por materia
+GET {{url}}/notas/materia/1
+Authorization: Bearer {{token}}
+
+### Ver todas las notas
+GET {{url}}/notas
+Authorization: Bearer {{token}}
+
+### Ver promedios por alumno y materia
+GET {{url}}/notas/promedios
+Authorization: Bearer {{token}}
