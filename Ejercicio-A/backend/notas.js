@@ -31,11 +31,18 @@ router.post(
 // obtener todas las notas
 router.get("/", verificarAutenticacion, async (req, res) => {
   const [rows] = await db.execute(`
-    SELECT n.*, a.nombre AS alumno, m.nombre AS materia
+    SELECT
+      n.id,
+      a.nombre AS alumno_nombre,
+      a.apellido AS alumno_apellido,
+      m.nombre AS materia_nombre,
+      n.nota1,
+      n.nota2,
+      n.nota3
     FROM notas n
     JOIN alumnos a ON n.alumno_id = a.id
     JOIN materias m ON n.materia_id = m.id
-    ORDER BY alumno, materia
+    ORDER BY alumno_nombre, materia_nombre
   `);
 
   res.json({ success: true, notas: rows });
@@ -49,13 +56,18 @@ router.get(
   verificarValidaciones,
   async (req, res) => {
     const id = Number(req.params.id);
-    const [rows] = await db.execute(
-      `SELECT n.*, m.nombre AS materia
-       FROM notas n
-       JOIN materias m ON n.materia_id = m.id
-       WHERE n.alumno_id=?`,
-      [id]
-    );
+    const [rows] = await db.execute(`
+      SELECT
+        n.id,
+        m.nombre AS materia_nombre,
+        n.nota1,
+        n.nota2,
+        n.nota3,
+        ROUND((n.nota1 + n.nota2 + n.nota3)/3, 2) AS promedio
+      FROM notas n
+      JOIN materias m ON n.materia_id = m.id
+      WHERE n.alumno_id = ?
+    `, [id]);
 
     res.json({ success: true, notas: rows });
   }
@@ -69,13 +81,18 @@ router.get(
   verificarValidaciones,
   async (req, res) => {
     const id = Number(req.params.id);
-    const [rows] = await db.execute(
-      `SELECT n.*, a.nombre AS alumno
-       FROM notas n
-       JOIN alumnos a ON n.alumno_id = a.id
-       WHERE n.materia_id=?`,
-      [id]
-    );
+    const [rows] = await db.execute(`
+      SELECT
+        n.id,
+        a.nombre AS alumno_nombre,
+        a.apellido AS alumno_apellido,
+        n.nota1,
+        n.nota2,
+        n.nota3
+      FROM notas n
+      JOIN alumnos a ON n.alumno_id = a.id
+      WHERE n.materia_id = ?
+    `, [id]);
 
     res.json({ success: true, notas: rows });
   }
@@ -84,14 +101,16 @@ router.get(
 // obtener promedio por alumnos y materia
 router.get("/promedios", verificarAutenticacion, async (req, res) => {
   const [rows] = await db.execute(`
-    SELECT 
-      a.nombre AS alumno,
-      m.nombre AS materia,
+      SELECT
+      a.id,
+      a.nombre AS alumno_nombre,
+      a.apellido AS alumno_apellido,
+      m.nombre AS materia_nombre,
       ROUND((n.nota1 + n.nota2 + n.nota3)/3, 2) AS promedio
     FROM notas n
     JOIN alumnos a ON n.alumno_id = a.id
     JOIN materias m ON n.materia_id = m.id
-    ORDER BY alumno, materia
+    ORDER BY alumno_nombre, materia_nombre
   `);
 
   res.json({ success: true, promedios: rows });
